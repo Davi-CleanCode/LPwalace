@@ -1,0 +1,499 @@
+import { useEffect, useRef, useState } from 'react'
+import { motion, useScroll, useTransform } from 'motion/react'
+
+const WHATSAPP_NUMBER = '5511999999999'
+const WHATSAPP_MSG = encodeURIComponent('Olá, Dr. Walace! gostaria de agendar minha sessão.')
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`
+
+const HERO_IMG =
+  'https://images.unsplash.com/photo-1714976694468-1dab37879a76?w=1800&h=1200&fit=crop&auto=format'
+
+const WALACE_IMG = '/walace.jpg'
+
+const SERVICES = [
+  { number: '01', label: 'Identidade', short: 'Autoconhecimento', desc: 'Autoconhecimento e construção de uma identidade sólida e autêntica.' },
+  { number: '02', label: 'Inteligência Emocional', short: 'Emoções', desc: 'Reconheça, compreenda e gerencie suas emoções com mais clareza.' },
+  { number: '03', label: 'Medos e Fobias', short: 'Enfrentamento', desc: 'Enfrentamento gradual e ressignificação de medos limitantes.' },
+  { number: '04', label: 'Habilidades Sociais', short: 'Relacionamentos', desc: 'Desenvolva comunicação assertiva e relacionamentos mais saudáveis.' },
+  { number: '05', label: 'Ansiedade', short: 'Terapia', desc: 'Tratamento baseado em evidências para compreender e aliviar o sofrimento.' },
+  { number: '06', label: 'Depressão', short: 'Acolhimento', desc: 'Um espaço seguro para compreender padrões e construir novos caminhos.' },
+  { number: '07', label: 'Autismo', short: 'TEA', desc: 'Suporte especializado para adultos no espectro autista.' },
+  { number: '08', label: 'TDAH', short: 'Organização', desc: 'Estratégias práticas para foco, organização e regulação emocional.' },
+]
+
+function useInView(threshold = 0.2) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true)
+        observer.disconnect()
+      }
+    }, { threshold })
+
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, visible }
+}
+
+export default function App() {
+  const [aware, setAware] = useState(false)
+  const [checked, setChecked] = useState(false)
+  const [name, setName] = useState('')
+
+  const ctaSection = useInView(0.2)
+  const storyRef = useRef<HTMLDivElement>(null)
+
+  const { scrollYProgress } = useScroll({
+    target: storyRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.23, 0.32], [1, 1, 0])
+  const heroScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.06])
+
+  const eyebrowY = useTransform(scrollYProgress, [0, 0.18, 0.3], [0, -20, -140])
+  const eyebrowOpacity = useTransform(scrollYProgress, [0, 0.18, 0.3], [1, 0.8, 0])
+
+  const headlineY = useTransform(scrollYProgress, [0, 0.16, 0.31], [0, -15, -500])
+  const headlineScale = useTransform(scrollYProgress, [0, 0.2, 0.31], [1, 0.98, 0.72])
+  const headlineOpacity = useTransform(scrollYProgress, [0, 0.2, 0.32], [1, 1, 0])
+
+  const heroTextY = useTransform(scrollYProgress, [0, 0.18, 0.3], [0, -15, -120])
+  const heroTextOpacity = useTransform(scrollYProgress, [0, 0.17, 0.3], [1, 0.85, 0])
+
+  const heroButtonY = useTransform(scrollYProgress, [0, 0.15, 0.29], [0, -15, -90])
+  const heroButtonOpacity = useTransform(scrollYProgress, [0, 0.14, 0.28], [1, 0.7, 0])
+
+  const doctorOpacity = useTransform(
+    scrollYProgress,
+    [0.08, 0.16, 0.24, 0.65, 0.74],
+    [0, 0.55, 1, 1, 0]
+  )
+
+  const doctorX = useTransform(
+    scrollYProgress,
+    [0.08, 0.22, 0.42, 0.62, 0.74],
+    [110, 0, 0, 0, 100]
+  )
+
+  const doctorY = useTransform(
+    scrollYProgress,
+    [0.08, 0.22, 0.42, 0.62, 0.74],
+    [80, 0, 0, 0, -30]
+  )
+
+  const doctorScale = useTransform(
+    scrollYProgress,
+    [0.08, 0.22, 0.42, 0.62, 0.74],
+    [0.72, 0.92, 1, 1, 0.82]
+  )
+
+  const aboutOpacity = useTransform(
+    scrollYProgress,
+    [0.27, 0.36, 0.61, 0.74],
+    [0, 1, 1, 0]
+  )
+
+  const aboutX = useTransform(
+    scrollYProgress,
+    [0.27, 0.37, 0.61, 0.74],
+    [100, 0, 0, -600]
+  )
+
+  const aboutScale = useTransform(
+    scrollYProgress,
+    [0.32, 0.6, 0.74],
+    [0.97, 1, 0.9]
+  )
+  const aboutBackgroundOpacity = useTransform(
+    scrollYProgress,
+    [0.23, 0.33, 0.62, 0.76],
+    [0, 1, 1, 0]
+  )
+
+
+  const casesOpacity = useTransform(
+    scrollYProgress,
+    [0.62, 0.73, 0.98, 1],
+    [0, 1, 1, 1]
+  )
+
+  const casesTitleX = useTransform(
+    scrollYProgress,
+    [0.62, 0.75],
+    [180, 0]
+  )
+
+  const casesX = useTransform(
+    scrollYProgress,
+    [0.69, 0.98],
+    ['34vw', '-72vw']
+  )
+
+  const casesBackgroundOpacity = useTransform(
+    scrollYProgress,
+    [0.61, 0.73, 1],
+    [0, 1, 1]
+  )
+
+  const scrollIndicatorOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.06, 0.15],
+    [1, 0.7, 0]
+  )
+
+  function handleAware() {
+    if (!checked) return
+    setAware(true)
+    window.setTimeout(() => {
+      window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer')
+    }, 600)
+  }
+
+  function handleFinalCTA(event: React.FormEvent) {
+    event.preventDefault()
+    window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer')
+  }
+
+  return (
+    <div
+      className="min-h-screen overflow-x-hidden bg-white text-[#111410]"
+      style={{ fontFamily: "'Outfit', sans-serif" }}
+    >
+
+      <section ref={storyRef} className="relative h-[320vh]">
+        <div className="sticky top-0 h-screen overflow-hidden bg-[#07150d]">
+
+          <motion.div
+            style={{ opacity: heroOpacity }}
+            className="absolute inset-0 z-0 overflow-hidden"
+          >
+            <motion.img
+              src={HERO_IMG}
+              alt=""
+              style={{ scale: heroScale }}
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            />
+
+            <div className="absolute inset-0 bg-[#07150d]/70" />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(90deg, rgba(6,24,13,.94) 0%, rgba(6,24,13,.72) 48%, rgba(6,24,13,.28) 100%)',
+              }}
+            />
+          </motion.div>
+
+          <motion.div
+            style={{ opacity: aboutBackgroundOpacity }}
+            className="absolute inset-0 z-10 bg-[#d4edda]"
+          />
+
+          <motion.div
+            style={{ opacity: casesBackgroundOpacity }}
+            className="absolute inset-0 z-20 bg-[#0d1b12]"
+          />
+
+          <motion.div
+            style={{ opacity: heroOpacity }}
+            className="absolute inset-0 z-30 flex items-center"
+          >
+            <div className="mx-auto w-full max-w-6xl px-6 md:px-10">
+              <div className="max-w-3xl">
+                <motion.p
+                  style={{ y: eyebrowY, opacity: eyebrowOpacity }}
+                  className="mb-6 uppercase tracking-[0.18em] text-[10px] font-medium text-[#a8d5b5] md:text-xs"
+                >
+                  Psicologia Clínica · Terapia Cognitiva Comportamental · Online e Presencial
+                </motion.p>
+
+                <motion.h1
+                  style={{
+                    y: headlineY,
+                    scale: headlineScale,
+                    opacity: headlineOpacity,
+                    transformOrigin: 'left center',
+                    fontFamily: "'Fraunces', serif",
+                  }}
+                  className="max-w-[760px] text-[clamp(2.8rem,7vw,5.8rem)] font-bold leading-[.98] text-white"
+                >
+                  Você não precisa
+                  <br />
+                  <span className="text-[#d4edda]">carregar esse peso</span>
+                  <br />
+                  sozinho.
+                </motion.h1>
+
+                <motion.p
+                  style={{ y: heroTextY, opacity: heroTextOpacity }}
+                  className="mt-7 max-w-xl text-sm leading-relaxed text-[#d4edda] md:text-base"
+                >
+                  Cuidar da sua saúde mental é o ato mais corajoso que você pode fazer.
+                  Juntos encontramos o caminho para uma vida mais leve e inteira.
+                </motion.p>
+
+                <motion.a
+                  href="#valor"
+                  style={{ y: heroButtonY, opacity: heroButtonOpacity }}
+                  className="mt-9 inline-block rounded-xl bg-[#d4edda] px-8 py-4 text-sm font-medium tracking-wide text-[#111410] transition-colors hover:bg-[#a8d5b5]"
+                >
+                  Agende sua sessão
+                </motion.a>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            style={{
+              x: doctorX,
+              y: doctorY,
+              scale: doctorScale,
+              opacity: doctorOpacity,
+            }}
+            className="absolute left-1/2 top-1/2 z-50 aspect-[736/920] w-[210px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[30px] bg-[#111410] p-2 shadow-[0_35px_90px_rgba(0,0,0,.32)] md:w-[280px] lg:w-[315px]"
+          >
+            <img
+              src={WALACE_IMG}
+              alt="Dr. Walace, psicólogo clínico"
+              className="h-full w-full rounded-[23px] object-cover object-top"
+            />
+            <div className="pointer-events-none absolute inset-2 rounded-[23px] border border-white/15" />
+          </motion.div>
+
+          <motion.div
+            style={{ x: aboutX, opacity: aboutOpacity, scale: aboutScale }}
+            className="absolute inset-0 z-40 flex items-center"
+          >
+            <div className="mx-auto w-full max-w-6xl px-6 md:px-10">
+              <div className="max-w-[1150px] mx-auto">
+                <div className="max-w-[620px] md:max-w-[650px]">
+                  <p className="mb-4 uppercase tracking-[0.18em] text-[10px] font-semibold text-[#3a7d52]">
+                    Conheça o profissional
+                  </p>
+
+                  <h2
+                    className="text-[clamp(2.5rem,5vw,4.6rem)] font-semibold italic leading-none text-[#111410]"
+                    style={{ fontFamily: "'Fraunces', serif" }}
+                  >
+                    Sobre Mim
+                  </h2>
+
+                  <div className="mt-7 max-w-xl space-y-4 text-sm leading-relaxed text-[#2a3528] md:text-base">
+                    <p>
+                      Olá! Sou o Dr. Walace, psicólogo clínico (CRP 06/000000), com formação pela Universidade de São Paulo e especialização em Terapia Cognitivo-Comportamental.
+                    </p>
+                    <p>
+                      Ao longo de mais de 8 anos acompanhando adultos, aprendi que cada pessoa carrega uma história única — e que o processo terapêutico começa quando nos sentimos seguros o suficiente para contá-la.
+                    </p>
+                    <p>
+                      Com base na Terapia Cognitivo-Comportamental, atendo casos de ansiedade, depressão, TDAH, TEA, medo, angústia e dificuldades em habilidades sociais.
+                    </p>
+                  </div>
+
+                  <div className="mt-7 flex max-w-xl flex-wrap gap-2">
+                    {['TCC', 'Ansiedade', 'Depressão', 'TDAH', 'Autismo', 'Identidade', 'Medo', 'Angústia'].map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-[#a8d5b5] px-3 py-1.5 text-[11px] font-medium text-[#1e3d28]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            style={{ opacity: casesOpacity }}
+            className="absolute inset-0 z-60 flex items-center overflow-hidden"
+          >
+            <div className="w-full">
+              <motion.div
+                style={{ x: casesTitleX }}
+                className="mx-auto mb-10 max-w-6xl px-6 md:px-10"
+              >
+                <p className="mb-3 uppercase tracking-[0.18em] text-[10px] font-semibold text-[#6aab82] md:text-xs">
+                  Áreas de atuação
+                </p>
+                <h2
+                  className="text-[clamp(2.4rem,5vw,4.5rem)] font-semibold leading-none text-white"
+                  style={{ fontFamily: "'Fraunces', serif" }}
+                >
+                  Como posso ajudar
+                </h2>
+              </motion.div>
+
+              <motion.div
+                style={{ x: casesX }}
+                className="flex w-max gap-5 pl-[8vw]"
+              >
+                {SERVICES.map((service) => (
+                  <motion.article
+                    key={service.number}
+                    whileHover={{ y: -8, scale: 1.015 }}
+                    transition={{ duration: 0.25 }}
+                    className="flex h-[300px] w-[275px] flex-shrink-0 flex-col justify-between rounded-[28px] border border-[#35553d] bg-[#17251a] p-7 md:h-[350px] md:w-[340px] md:p-9"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[#6aab82]">{service.number}</span>
+                      <span className="text-[10px] uppercase tracking-widest text-[#6aab82]">{service.short}</span>
+                    </div>
+
+                    <div>
+                      <h3
+                        className="text-[clamp(1.8rem,3vw,2.5rem)] font-semibold leading-[1.05] text-white"
+                        style={{ fontFamily: "'Fraunces', serif" }}
+                      >
+                        {service.label}
+                      </h3>
+                      <p className="mt-4 text-sm leading-relaxed text-[#a8d5b5]">{service.desc}</p>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[#6aab82]">Terapia Cognitivo-Comportamental</span>
+                      <span className="text-xl text-white">→</span>
+                    </div>
+                  </motion.article>
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            style={{ opacity: scrollIndicatorOpacity }}
+            className="absolute bottom-8 left-1/2 z-[70] flex -translate-x-1/2 flex-col items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-white/60"
+          >
+            <span>Scroll</span>
+            <div className="h-10 w-px overflow-hidden bg-white/30">
+              <motion.div
+                animate={{ y: [0, 40] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                className="h-1/2 w-full bg-white"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="valor" className="bg-[#eaf7ed] px-6 py-24">
+        <div className="mx-auto max-w-xl text-center">
+          <p className="mb-4 text-xs font-medium uppercase tracking-widest text-[#3a7d52]">Investimento</p>
+
+          <h2
+            className="text-[clamp(1.8rem,4vw,2.6rem)] font-semibold leading-tight"
+            style={{ fontFamily: "'Fraunces', serif" }}
+          >
+            Consulta individual
+            <br />
+            <span className="text-[#2d6a46]">R$ 120 / sessão</span>
+          </h2>
+
+          <p className="mt-5 text-[0.97rem] leading-relaxed text-[#3a3f36]">
+            Sessões de 50 minutos, agenda flexível e sigilo total. Atendimento pelo plano de saúde mediante verificação de cobertura.
+          </p>
+
+          <div className="mt-10 rounded-2xl border border-[#c5e8ce] bg-white p-8 shadow-sm">
+            <label className="flex cursor-pointer items-start gap-3 text-left">
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={(event) => setChecked(event.target.checked)}
+                className="mt-1 h-5 w-5 flex-shrink-0 rounded"
+                style={{ accentColor: '#2d6a46' }}
+              />
+              <span className="text-sm leading-snug text-[#3a3f36]">
+                Estou ciente de que o valor da consulta é de <strong className="text-[#111410]">R$ 120</strong> por sessão e desejo prosseguir com o agendamento.
+              </span>
+            </label>
+
+            <button
+              onClick={handleAware}
+              disabled={!checked}
+              className="mt-6 w-full rounded-xl py-4 text-base font-medium tracking-wide transition-all duration-300"
+              style={{
+                background: checked ? '#2d6a46' : '#c5e8ce',
+                color: checked ? '#fff' : '#6aab82',
+                cursor: checked ? 'pointer' : 'not-allowed',
+              }}
+            >
+              {aware ? 'Redirecionando para o WhatsApp…' : 'Quero agendar minha consulta →'}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#d4edda] px-6 py-24">
+        <div
+          ref={ctaSection.ref}
+          className={`mx-auto max-w-xl text-center transition-all duration-700 ${
+            ctaSection.visible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+          }`}
+        >
+          <p className="mb-4 text-xs font-medium uppercase tracking-widest text-[#3a7d52]">Próximo passo</p>
+
+          <h2
+            className="text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-tight text-[#111410]"
+            style={{ fontFamily: "'Fraunces', serif" }}
+          >
+            Seu próximo passo é simples:
+            <br />
+            <em className="text-[#2d6a46]">começar.</em>
+          </h2>
+
+          <p className="mt-5 text-[0.95rem] text-[#3a3f36]">
+            Vamos conversar sobre o que você está vivendo e entender juntos o melhor caminho.
+          </p>
+
+          <form onSubmit={handleFinalCTA} className="mx-auto mt-8 flex max-w-sm flex-col gap-3">
+            <input
+              type="text"
+              placeholder="Digite seu nome"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className="w-full rounded-xl border border-[#c5e8ce] bg-white px-5 py-4 text-sm text-[#111410] outline-none transition-colors focus:border-[#2d6a46]"
+            />
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-[#2d6a46] py-4 text-sm font-semibold tracking-wide text-white transition-colors hover:bg-[#235538]"
+            >
+              Continuar registro →
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <footer className="bg-[#111410] px-6 py-10 text-[#6aab82]">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-xs md:flex-row">
+          <div>
+            <span
+              className="font-semibold text-[#d4edda]"
+              style={{ fontFamily: "'Fraunces', serif", fontSize: '1rem' }}
+            >
+              Dr. Walace
+            </span>
+            <span className="ml-2">· Psicólogo Clínico · CRP 06/000000</span>
+          </div>
+
+          <div className="flex gap-6">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#d4edda]">WhatsApp</a>
+            <a href="mailto:contato@drwalace.com.br" className="transition-colors hover:text-[#d4edda]">E-mail</a>
+            <a href="#valor" className="transition-colors hover:text-[#d4edda]">Agendar</a>
+          </div>
+
+          <p>© 2026 Dr. Walace · Todos os direitos reservados</p>
+        </div>
+      </footer>
+    </div>
+  )
+  }

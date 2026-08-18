@@ -1,0 +1,10 @@
+{
+  "description": "Create an engaging landing page for psychologists featuring a compelling headline, value-driven subheadline, and easy WhatsApp consultation booking.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
