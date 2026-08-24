@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useMotionValue, useTransform } from 'motion/react'
 
-const WHATSAPP_NUMBER = '5511999999999'
-const WHATSAPP_MSG = encodeURIComponent('Olá, Dr. Walace! gostaria de agendar minha sessão.')
+const WHATSAPP_NUMBER = '5511949460309'
+const WHATSAPP_MSG = encodeURIComponent('Olá, Wallace! Gostaria de saber mais sobre o atendimento psicológico online.')
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`
 
 const HERO_IMG =
   'https://images.unsplash.com/photo-1714976694468-1dab37879a76?w=1800&h=1200&fit=crop&auto=format'
 
-const WALACE_IMG = '/walace.jpg'
+const WALACE_IMG = '/walace02.jpg'
 
 const SERVICES = [
   { number: '01', label: 'Identidade', short: 'Autoconhecimento', desc: 'Autoconhecimento e construção de uma identidade sólida e autêntica.' },
@@ -46,107 +46,147 @@ function useInView(threshold = 0.2) {
 export default function App() {
   const [aware, setAware] = useState(false)
   const [checked, setChecked] = useState(false)
-  const [name, setName] = useState('')
 
   const ctaSection = useInView(0.2)
   const storyRef = useRef<HTMLDivElement>(null)
+  const [sceneProgress, setSceneProgress] = useState(0)
 
-  const { scrollYProgress } = useScroll({
-    target: storyRef,
-    offset: ['start start', 'end end'],
-  })
+  // Use the browser's scroll position as the source of truth for the pinned
+  // Motion scene. This avoids target/offset calculation issues with sticky
+  // sections in different browsers/dev servers.
+  useEffect(() => {
+    let frame = 0
 
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.23, 0.32], [1, 1, 0])
-  const heroScale = useTransform(scrollYProgress, [0, 0.28], [1, 1.06])
+    const updateScene = () => {
+      frame = 0
+      const scene = storyRef.current
+      if (!scene) return
 
-  const eyebrowY = useTransform(scrollYProgress, [0, 0.18, 0.3], [0, -20, -140])
-  const eyebrowOpacity = useTransform(scrollYProgress, [0, 0.18, 0.3], [1, 0.8, 0])
+      const rect = scene.getBoundingClientRect()
+      const scrollableDistance = Math.max(scene.offsetHeight - window.innerHeight, 1)
+      const progress = Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
 
-  const headlineY = useTransform(scrollYProgress, [0, 0.16, 0.31], [0, -15, -500])
-  const headlineScale = useTransform(scrollYProgress, [0, 0.2, 0.31], [1, 0.98, 0.72])
-  const headlineOpacity = useTransform(scrollYProgress, [0, 0.2, 0.32], [1, 1, 0])
+      setSceneProgress(progress)
+    }
 
-  const heroTextY = useTransform(scrollYProgress, [0, 0.18, 0.3], [0, -15, -120])
-  const heroTextOpacity = useTransform(scrollYProgress, [0, 0.17, 0.3], [1, 0.85, 0])
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateScene)
+    }
 
-  const heroButtonY = useTransform(scrollYProgress, [0, 0.15, 0.29], [0, -15, -90])
-  const heroButtonOpacity = useTransform(scrollYProgress, [0, 0.14, 0.28], [1, 0.7, 0])
+    updateScene()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', updateScene)
 
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', updateScene)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  const sceneProgressMotion = useMotionValue(0)
+
+  useEffect(() => {
+    sceneProgressMotion.set(sceneProgress)
+  }, [sceneProgress, sceneProgressMotion])
+
+  const scrollProgress = sceneProgressMotion
+
+  // HERO
+  const heroOpacity = useTransform(scrollProgress, [0, 0.22, 0.34], [1, 1, 0])
+  const heroScale = useTransform(scrollProgress, [0, 0.34], [1, 1.045])
+
+  const eyebrowY = useTransform(scrollProgress, [0, 0.20, 0.34], [0, -18, -100])
+  const eyebrowOpacity = useTransform(scrollProgress, [0, 0.20, 0.34], [1, 0.75, 0])
+
+  const headlineY = useTransform(scrollProgress, [0, 0.18, 0.34], [0, -12, -180])
+  const headlineScale = useTransform(scrollProgress, [0, 0.20, 0.34], [1, 0.98, 0.78])
+  const headlineOpacity = useTransform(scrollProgress, [0, 0.22, 0.34], [1, 1, 0])
+
+  const heroTextY = useTransform(scrollProgress, [0, 0.20, 0.34], [0, -10, -70])
+  const heroTextOpacity = useTransform(scrollProgress, [0, 0.20, 0.34], [1, 0.8, 0])
+
+  const heroButtonY = useTransform(scrollProgress, [0, 0.18, 0.32], [0, -10, -55])
+  const heroButtonOpacity = useTransform(scrollProgress, [0, 0.18, 0.32], [1, 0.65, 0])
+
+  // DOCTOR / PROFILE TRANSITION
   const doctorOpacity = useTransform(
-    scrollYProgress,
-    [0.08, 0.16, 0.24, 0.65, 0.74],
+    scrollProgress,
+    [0.08, 0.18, 0.28, 0.62, 0.72],
     [0, 0.55, 1, 1, 0]
   )
 
   const doctorX = useTransform(
-    scrollYProgress,
-    [0.08, 0.22, 0.42, 0.62, 0.74],
-    [110, 0, 0, 0, 100]
+    scrollProgress,
+    [0.08, 0.22, 0.42, 0.62, 0.72],
+    [110, 0, 0, 0, 90]
   )
 
   const doctorY = useTransform(
-    scrollYProgress,
-    [0.08, 0.22, 0.42, 0.62, 0.74],
-    [80, 0, 0, 0, -30]
+    scrollProgress,
+    [0.08, 0.22, 0.42, 0.62, 0.72],
+    [80, 0, 0, 0, -25]
   )
 
   const doctorScale = useTransform(
-    scrollYProgress,
-    [0.08, 0.22, 0.42, 0.62, 0.74],
-    [0.72, 0.92, 1, 1, 0.82]
+    scrollProgress,
+    [0.08, 0.22, 0.42, 0.62, 0.72],
+    [0.72, 0.92, 1, 1, 0.84]
   )
 
+  // ABOUT
   const aboutOpacity = useTransform(
-    scrollYProgress,
-    [0.27, 0.36, 0.61, 0.74],
+    scrollProgress,
+    [0.26, 0.36, 0.58, 0.70],
     [0, 1, 1, 0]
   )
 
   const aboutX = useTransform(
-    scrollYProgress,
-    [0.27, 0.37, 0.61, 0.74],
-    [100, 0, 0, -600]
+    scrollProgress,
+    [0.26, 0.36, 0.58, 0.70],
+    [90, 0, 0, -420]
   )
 
   const aboutScale = useTransform(
-    scrollYProgress,
-    [0.32, 0.6, 0.74],
-    [0.97, 1, 0.9]
+    scrollProgress,
+    [0.32, 0.58, 0.70],
+    [0.97, 1, 0.94]
   )
+
   const aboutBackgroundOpacity = useTransform(
-    scrollYProgress,
-    [0.23, 0.33, 0.62, 0.76],
+    scrollProgress,
+    [0.22, 0.34, 0.58, 0.72],
     [0, 1, 1, 0]
   )
 
-
+  // SERVICES / HORIZONTAL SCROLL
   const casesOpacity = useTransform(
-    scrollYProgress,
-    [0.62, 0.73, 0.98, 1],
+    scrollProgress,
+    [0.58, 0.70, 0.98, 1],
     [0, 1, 1, 1]
   )
 
   const casesTitleX = useTransform(
-    scrollYProgress,
-    [0.62, 0.75],
-    [180, 0]
+    scrollProgress,
+    [0.58, 0.70],
+    [140, 0]
   )
 
   const casesX = useTransform(
-    scrollYProgress,
-    [0.69, 0.98],
-    ['34vw', '-72vw']
+    scrollProgress,
+    [0.68, 0.98],
+    ['8%', '-76%']
   )
 
   const casesBackgroundOpacity = useTransform(
-    scrollYProgress,
-    [0.61, 0.73, 1],
+    scrollProgress,
+    [0.58, 0.70, 1],
     [0, 1, 1]
   )
 
   const scrollIndicatorOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.06, 0.15],
+    scrollProgress,
+    [0, 0.06, 0.16],
     [1, 0.7, 0]
   )
 
@@ -158,23 +198,17 @@ export default function App() {
     }, 600)
   }
 
-  function handleFinalCTA(event: React.FormEvent) {
-    event.preventDefault()
-    window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer')
-  }
-
   return (
     <div
-      className="min-h-screen overflow-x-hidden bg-white text-[#111410]"
-      style={{ fontFamily: "'Outfit', sans-serif" }}
+      className="relative min-h-screen bg-[#07150d] text-[#111410]"
+      style={{ fontFamily: "'Outfit', sans-serif", overflowX: "clip" }}
     >
-
-      <section ref={storyRef} className="relative h-[320vh]">
-        <div className="sticky top-0 h-screen overflow-hidden bg-[#07150d]">
+      <section ref={storyRef} className="relative h-[400vh] bg-[#07150d]">
+        <div className="sticky top-0 z-10 h-screen overflow-hidden bg-[#07150d]" style={{ isolation: "isolate" }}>
 
           <motion.div
             style={{ opacity: heroOpacity }}
-            className="absolute inset-0 z-0 overflow-hidden"
+            className="absolute inset-0 z-0 overflow-hidden will-change-[opacity]"
           >
             <motion.img
               src={HERO_IMG}
@@ -213,7 +247,7 @@ export default function App() {
                   style={{ y: eyebrowY, opacity: eyebrowOpacity }}
                   className="mb-6 uppercase tracking-[0.18em] text-[10px] font-medium text-[#a8d5b5] md:text-xs"
                 >
-                  Psicologia Clínica · Terapia Cognitiva Comportamental · Online e Presencial
+                  Psicologia Clínica · Terapia Cognitivo-Comportamental · Atendimento Online
                 </motion.p>
 
                 <motion.h1
@@ -259,7 +293,7 @@ export default function App() {
               scale: doctorScale,
               opacity: doctorOpacity,
             }}
-            className="absolute left-1/2 top-1/2 z-50 aspect-[736/920] w-[210px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[30px] bg-[#111410] p-2 shadow-[0_35px_90px_rgba(0,0,0,.32)] md:w-[280px] lg:w-[315px]"
+            className="absolute left-1/2 top-1/2 z-50 aspect-[736/920] w-[210px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[30px] bg-[#111410] p-2 shadow-[0_35px_90px_rgba(0,0,0,.32)] will-change-transform md:w-[280px] lg:w-[315px]"
           >
             <img
               src={WALACE_IMG}
@@ -271,7 +305,7 @@ export default function App() {
 
           <motion.div
             style={{ x: aboutX, opacity: aboutOpacity, scale: aboutScale }}
-            className="absolute inset-0 z-40 flex items-center"
+            className="absolute inset-0 z-40 flex items-center will-change-transform"
           >
             <div className="mx-auto w-full max-w-6xl px-6 md:px-10">
               <div className="max-w-[1150px] mx-auto">
@@ -289,13 +323,22 @@ export default function App() {
 
                   <div className="mt-7 max-w-xl space-y-4 text-sm leading-relaxed text-[#2a3528] md:text-base">
                     <p>
-                      Olá! Sou o Dr. Walace, psicólogo clínico (CRP 06/000000), com formação pela Universidade de São Paulo e especialização em Terapia Cognitivo-Comportamental.
+                      Sou Psicólogo Clínico, atuo com manejo do comportamento e das emoções e na orientação parental, ajudando crianças e adolescentes neuroatípicas a conquistarem autonomia e maior repertório para expressividade das emoções.
                     </p>
                     <p>
-                      Ao longo de mais de 8 anos acompanhando adultos, aprendi que cada pessoa carrega uma história única — e que o processo terapêutico começa quando nos sentimos seguros o suficiente para contá-la.
+                      Realizo atendimentos com adultos, através da Terapia Cognitiva Comportamental (TCC), com foco em construir autonomia do paciente para o gerenciamento das emoções.
                     </p>
                     <p>
-                      Com base na Terapia Cognitivo-Comportamental, atendo casos de ansiedade, depressão, TDAH, TEA, medo, angústia e dificuldades em habilidades sociais.
+                      Também atuo em consultório atendendo crianças e adolescentes atípicos através da ciência ABA.
+                    </p>
+                    <p>
+                      Pós graduado em Neuropsicologia com ênfase em avaliações. E pós graduando em Análise Aplicada do Comportamento (ABA).
+                    </p>
+                    <p>
+                      Tenho experiência em grupos terapêuticos, com crianças, adolescentes e idosos.
+                    </p>
+                    <p>
+                      Na aplicação, correção de testes e construção do laudo psicológico para a realização do psicodiagnóstico. E em apoio psicológico a comunidades vulneráveis.
                     </p>
                   </div>
 
@@ -316,7 +359,7 @@ export default function App() {
 
           <motion.div
             style={{ opacity: casesOpacity }}
-            className="absolute inset-0 z-60 flex items-center overflow-hidden"
+            className="absolute inset-0 z-[60] flex items-center overflow-hidden"
           >
             <div className="w-full">
               <motion.div
@@ -384,9 +427,9 @@ export default function App() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
-      <section id="valor" className="bg-[#eaf7ed] px-6 py-24">
+      <section id="valor" className="min-h-screen bg-[#eaf7ed] px-6 py-24" style={{ backgroundColor: '#eaf7ed' }}>
         <div className="mx-auto max-w-xl text-center">
           <p className="mb-4 text-xs font-medium uppercase tracking-widest text-[#3a7d52]">Investimento</p>
 
@@ -400,7 +443,7 @@ export default function App() {
           </h2>
 
           <p className="mt-5 text-[0.97rem] leading-relaxed text-[#3a3f36]">
-            Sessões de 50 minutos, agenda flexível e sigilo total. Atendimento pelo plano de saúde mediante verificação de cobertura.
+            Sessões de 50 minutos, agenda flexível e sigilo total. Atendimento psicológico individual, com sessões de 50 minutos.
           </p>
 
           <div className="mt-10 rounded-2xl border border-[#c5e8ce] bg-white p-8 shadow-sm">
@@ -433,12 +476,11 @@ export default function App() {
         </div>
       </section>
 
-      <section className="bg-[#d4edda] px-6 py-24">
+      <section className="min-h-screen bg-[#d4edda] px-6 py-24" style={{ backgroundColor: '#d4edda' }}>
         <div
           ref={ctaSection.ref}
-          className={`mx-auto max-w-xl text-center transition-all duration-700 ${
-            ctaSection.visible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`}
+          className={`mx-auto max-w-xl text-center transition-all duration-700 ${ctaSection.visible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            }`}
         >
           <p className="mb-4 text-xs font-medium uppercase tracking-widest text-[#3a7d52]">Próximo passo</p>
 
@@ -455,21 +497,16 @@ export default function App() {
             Vamos conversar sobre o que você está vivendo e entender juntos o melhor caminho.
           </p>
 
-          <form onSubmit={handleFinalCTA} className="mx-auto mt-8 flex max-w-sm flex-col gap-3">
-            <input
-              type="text"
-              placeholder="Digite seu nome"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              className="w-full rounded-xl border border-[#c5e8ce] bg-white px-5 py-4 text-sm text-[#111410] outline-none transition-colors focus:border-[#2d6a46]"
-            />
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-[#2d6a46] py-4 text-sm font-semibold tracking-wide text-white transition-colors hover:bg-[#235538]"
+          <div className="mx-auto mt-8 max-w-sm">
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded-xl bg-[#2d6a46] py-4 text-center text-sm font-semibold tracking-wide text-white transition-colors hover:bg-[#235538]"
             >
-              Continuar registro →
-            </button>
-          </form>
+              Quero saber mais sobre o atendimento →
+            </a>
+          </div>
         </div>
       </section>
 
@@ -482,7 +519,7 @@ export default function App() {
             >
               Dr. Walace
             </span>
-            <span className="ml-2">· Psicólogo Clínico · CRP 06/000000</span>
+            <span className="ml-2">· Psicólogo Clínico</span>
           </div>
 
           <div className="flex gap-6">
@@ -494,6 +531,6 @@ export default function App() {
           <p>© 2026 Dr. Walace · Todos os direitos reservados</p>
         </div>
       </footer>
-    </div>
+    </div >
   )
-  }
+}
