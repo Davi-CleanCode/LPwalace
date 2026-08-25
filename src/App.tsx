@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useTransform } from 'motion/react'
 
 const WHATSAPP_NUMBER = '5511949460309'
-const WHATSAPP_MSG = encodeURIComponent('Olá, Wallace! Gostaria de saber mais sobre o atendimento psicológico online.')
+const WHATSAPP_MSG = encodeURIComponent('Olá, Walace! Gostaria de saber mais sobre o atendimento psicológico online.')
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`
 
 const HERO_IMG =
@@ -105,9 +105,6 @@ export default function App() {
 
   const heroTextY = useTransform(scrollProgress, [0, 0.20, 0.34], [0, -10, -70])
   const heroTextOpacity = useTransform(scrollProgress, [0, 0.20, 0.34], [1, 0.8, 0])
-
-  const heroButtonY = useTransform(scrollProgress, [0, 0.18, 0.32], [0, -10, -55])
-  const heroButtonOpacity = useTransform(scrollProgress, [0, 0.18, 0.32], [1, 0.65, 0])
 
   // DOCTOR / PROFILE TRANSITION
   const doctorOpacity = useTransform(
@@ -274,14 +271,6 @@ export default function App() {
                   Cuidar da sua saúde mental é o ato mais corajoso que você pode fazer.
                   Juntos encontramos o caminho para uma vida mais leve e inteira.
                 </motion.p>
-
-                <motion.a
-                  href="#valor"
-                  style={{ y: heroButtonY, opacity: heroButtonOpacity }}
-                  className="mt-9 inline-block rounded-xl bg-[#d4edda] px-8 py-4 text-sm font-medium tracking-wide text-[#111410] transition-colors hover:bg-[#a8d5b5]"
-                >
-                  Agende sua sessão
-                </motion.a>
               </div>
             </div>
           </motion.div>
@@ -293,7 +282,7 @@ export default function App() {
               scale: doctorScale,
               opacity: doctorOpacity,
             }}
-            className="absolute left-1/2 top-1/2 z-50 aspect-[736/920] w-[210px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[30px] bg-[#111410] p-2 shadow-[0_35px_90px_rgba(0,0,0,.32)] will-change-transform md:w-[280px] lg:w-[315px]"
+            className="absolute right-[2vw] top-1/2 z-50 aspect-[736/920] w-[180px] -translate-y-1/2 overflow-hidden rounded-[30px] bg-[#111410] p-2 shadow-[0_35px_90px_rgba(0,0,0,.32)] will-change-transform md:right-[4vw] md:w-[240px] lg:right-[5vw] lg:w-[315px]"
           >
             <img
               src={WALACE_IMG}
@@ -472,40 +461,6 @@ export default function App() {
             >
               {aware ? 'Redirecionando para o WhatsApp…' : 'Quero agendar minha consulta →'}
             </button>
-          </div>
-        </div>
-      </section>
-
-      <section className="min-h-screen bg-[#d4edda] px-6 py-24" style={{ backgroundColor: '#d4edda' }}>
-        <div
-          ref={ctaSection.ref}
-          className={`mx-auto max-w-xl text-center transition-all duration-700 ${ctaSection.visible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`}
-        >
-          <p className="mb-4 text-xs font-medium uppercase tracking-widest text-[#3a7d52]">Próximo passo</p>
-
-          <h2
-            className="text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-tight text-[#111410]"
-            style={{ fontFamily: "'Fraunces', serif" }}
-          >
-            Seu próximo passo é simples:
-            <br />
-            <em className="text-[#2d6a46]">começar.</em>
-          </h2>
-
-          <p className="mt-5 text-[0.95rem] text-[#3a3f36]">
-            Vamos conversar sobre o que você está vivendo e entender juntos o melhor caminho.
-          </p>
-
-          <div className="mx-auto mt-8 max-w-sm">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full rounded-xl bg-[#2d6a46] py-4 text-center text-sm font-semibold tracking-wide text-white transition-colors hover:bg-[#235538]"
-            >
-              Quero saber mais sobre o atendimento →
-            </a>
           </div>
         </div>
       </section>
