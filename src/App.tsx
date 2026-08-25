@@ -407,7 +407,7 @@ export default function App() {
                 className="font-semibold text-[#d4edda]"
                 style={{ fontFamily: "'Fraunces', serif", fontSize: '1rem' }}
               >
-                Dr. Walace
+                Psicologo Walace
               </span>
               <span className="ml-2">· Psicólogo Clínico</span>
             </div>
@@ -424,7 +424,7 @@ export default function App() {
               </a>
             </div>
 
-            <p>© 2026 Dr. Walace · Todos os direitos reservados</p>
+            <p>© 2026 Psicologo Walace · Todos os direitos reservados</p>
           </div>
         </footer>
       </div>
@@ -519,7 +519,7 @@ export default function App() {
             >
               <img
                 src={WALACE_IMG}
-                alt="Dr. Walace, psicólogo clínico"
+                alt="Psicologo Walace, psicólogo clínico"
                 className="h-full w-full rounded-[23px] object-cover object-top"
               />
               <div className="pointer-events-none absolute inset-2 rounded-[23px] border border-white/15" />
@@ -705,7 +705,7 @@ export default function App() {
                 className="font-semibold text-[#d4edda]"
                 style={{ fontFamily: "'Fraunces', serif", fontSize: '1rem' }}
               >
-                Dr. Walace
+                Psicologo Walace
               </span>
               <span className="ml-2">· Psicólogo Clínico</span>
             </div>
@@ -716,7 +716,7 @@ export default function App() {
               <a href="#valor" className="transition-colors hover:text-[#d4edda]">Agendar</a>
             </div>
 
-            <p>© 2026 Dr. Walace · Todos os direitos reservados</p>
+            <p>© 2026 Psicologo Walace · Todos os direitos reservados</p>
           </div>
         </footer>
       </div>
